@@ -298,10 +298,18 @@ std::vector<PuntoReal> calcularIntersecciones(const Circulo& primero, const Circ
 	const double baseX = static_cast<double>(primero.centroX) + (a * dx / distancia);
 	const double baseY = static_cast<double>(primero.centroY) + (a * dy / distancia);
 
-	return {{
+	std::vector<PuntoReal> puntos;
+	puntos.push_back({
 		static_cast<float>(baseX - dy * h / distancia),
 		static_cast<float>(baseY + dx * h / distancia)
-	}};
+	});
+	if (h > 0.0) {
+		puntos.push_back({
+			static_cast<float>(baseX + dy * h / distancia),
+			static_cast<float>(baseY - dx * h / distancia)
+		});
+	}
+	return puntos;
 }
 \end{lstlisting}
 
@@ -321,6 +329,8 @@ BufferVertices crearEscenaIntersecciones() {
 	};
 
 	for (std::size_t indice = 0; indice < circulos.size(); ++indice) {
+		const Circulo& circulo = circulos[indice];
+		const AlgoritmoCirculo algoritmo = algoritmos[indice % algoritmos.size()];
 		algoritmo(vertices, circulo.centroX, circulo.centroY, circulo.radio, circulo.color);
 	}
 
