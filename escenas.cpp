@@ -19,6 +19,10 @@ const Color colorRojo {0.87f, 0.23f, 0.18f};
 const Color colorVerde {0.18f, 0.60f, 0.34f};
 const Color colorMagenta {0.70f, 0.23f, 0.54f};
 
+void segmentoHorizontal(BufferVertices& vertices, int x, int y, int longitud, Color color) {
+    lineaBresenham(vertices, x, y, x + longitud, y, color);
+}
+
 void rectangulo(BufferVertices& vertices, int x1, int y1, int x2, int y2, Color color) {
     lineaBresenham(vertices, x1, y1, x2, y1, color);
     lineaBresenham(vertices, x2, y1, x2, y2, color);
@@ -80,42 +84,54 @@ std::vector<Circulo> generarCirculos(unsigned int semilla) {
 BufferVertices crearEscenaFigura() {
     BufferVertices vertices;
 
-    lineaBresenham(vertices, 50, 150, 910, 150, colorCarbon);
-    lineaBresenham(vertices, 70, 145, 900, 145, colorCarbon);
+    lineaBresenham(vertices, 40, 150, 920, 150, colorCarbon);
+    lineaBresenham(vertices, 60, 143, 900, 143, colorCarbon);
+    lineaBresenham(vertices, 270, 340, 650, 340, colorAzul);
 
     rectangulo(vertices, 180, 220, 720, 340, colorAzul);
     techo(vertices, colorAzul);
-    lineaBresenham(vertices, 250, 340, 670, 340, colorAzul);
+    lineaBresenham(vertices, 180, 220, 720, 220, colorAzul);
     lineaBresenham(vertices, 420, 340, 420, 460, colorAzul);
     lineaBresenham(vertices, 310, 340, 310, 430, colorAzul);
     lineaBresenham(vertices, 530, 340, 530, 430, colorAzul);
+    lineaBresenham(vertices, 338, 430, 392, 430, colorCeleste);
+    lineaBresenham(vertices, 448, 430, 502, 430, colorCeleste);
+    lineaBresenham(vertices, 600, 220, 610, 220, colorCarbon);
+    lineaBresenham(vertices, 300, 220, 320, 220, colorCarbon);
 
     rectangulo(vertices, 330, 360, 400, 430, colorCeleste);
     rectangulo(vertices, 440, 360, 510, 430, colorCeleste);
+    segmentoHorizontal(vertices, 392, 322, 18, colorCarbon);
+    segmentoHorizontal(vertices, 502, 322, 18, colorCarbon);
 
     lineaBresenham(vertices, 180, 270, 140, 270, colorRojo);
     lineaBresenham(vertices, 180, 290, 140, 290, colorRojo);
     lineaBresenham(vertices, 720, 270, 760, 270, colorRojo);
     lineaBresenham(vertices, 720, 290, 760, 290, colorRojo);
+    lineaBresenham(vertices, 720, 235, 736, 235, colorRojo);
 
     circuloCuatroVias(vertices, 310, 220, 70, colorCarbon);
     circuloPuntoMedio(vertices, 310, 220, 28, colorArena);
     circuloOchoVias(vertices, 590, 220, 70, colorCarbon);
     circuloDosVias(vertices, 590, 220, 28, colorArena);
-    circuloDosVias(vertices, 780, 560, 46, colorSol);
-    circuloOchoVias(vertices, 120, 520, 32, colorVerde);
-    circuloPuntoMedio(vertices, 840, 245, 18, colorRojo);
+    circuloDosVias(vertices, 780, 560, 54, colorSol);
+    circuloCuatroVias(vertices, 780, 560, 18, colorSol);
+    circuloOchoVias(vertices, 120, 585, 38, colorVerde);
+    circuloPuntoMedio(vertices, 840, 255, 20, colorRojo);
 
     for (int angulo = 0; angulo < 360; angulo += 30) {
         const double radianes = static_cast<double>(angulo) * 3.14159265358979323846 / 180.0;
-        const int x = 780 + static_cast<int>(std::round(std::cos(radianes) * 75.0));
-        const int y = 560 + static_cast<int>(std::round(std::sin(radianes) * 75.0));
+        const int x = 780 + static_cast<int>(std::round(std::cos(radianes) * 92.0));
+        const int y = 560 + static_cast<int>(std::round(std::sin(radianes) * 92.0));
         lineaBresenham(vertices, 780, 560, x, y, colorSol);
     }
 
-    lineaBresenham(vertices, 120, 520, 120, 580, colorVerde);
-    lineaBresenham(vertices, 120, 580, 95, 605, colorVerde);
-    lineaBresenham(vertices, 120, 580, 145, 610, colorVerde);
+    lineaBresenham(vertices, 120, 550, 120, 630, colorVerde);
+    lineaBresenham(vertices, 120, 630, 95, 662, colorVerde);
+    lineaBresenham(vertices, 120, 630, 145, 662, colorVerde);
+    lineaBresenham(vertices, 120, 630, 120, 668, colorVerde);
+    lineaBresenham(vertices, 120, 595, 120, 620, colorVerde);
+    lineaBresenham(vertices, 820, 255, 860, 255, colorRojo);
 
     return vertices;
 }

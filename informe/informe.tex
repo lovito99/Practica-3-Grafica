@@ -6,63 +6,444 @@
 \usepackage{geometry}
 \usepackage{amsmath}
 \usepackage{booktabs}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{float}
 \usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
 
 \geometry{margin=2.5cm}
-
-\title{Practica 3\\Algoritmos de lineas, circunferencias e intersecciones}
-\author{Lovito99}
-\date{27 de abril de 2026}
+\hypersetup{colorlinks=true, linkcolor=black, urlcolor=blue}
+\definecolor{codebg}{RGB}{248,249,252}
+\definecolor{codeframe}{RGB}{210,214,220}
+\definecolor{codekeyword}{RGB}{0,73,158}
+\definecolor{codestring}{RGB}{163,21,21}
+\definecolor{codecomment}{RGB}{0,128,0}
+\definecolor{codetext}{RGB}{30,30,30}
+\lstset{
+	basicstyle=\ttfamily\small,
+	breaklines=true,
+	frame=single,
+	columns=fullflexible,
+	backgroundcolor=\color{codebg},
+	rulecolor=\color{codeframe},
+	keywordstyle=\color{codekeyword}\bfseries,
+	stringstyle=\color{codestring},
+	commentstyle=\color{codecomment}\itshape,
+	identifierstyle=\color{codetext},
+	numberstyle=\tiny\color{gray},
+	numbers=left,
+	numbersep=8pt,
+	showstringspaces=false,
+	tabsize=4
+}
 
 \begin{document}
 
-\maketitle
+\pagenumbering{gobble}
+
+\begin{titlepage}
+	\centering
+	{\Large Laboratorio de Computacion Grafica 1\par}
+	\vspace{1.2cm}
+	{\LARGE \textbf{Practica 3}\par}
+	\vspace{0.4cm}
+	{\Large Algoritmos de lineas, circunferencias e intersecciones\par}
+	\vspace{2cm}
+
+	\begin{tabular}{>{\bfseries}p{4.5cm}p{9cm}}
+		Profesor & Dr. Hans Harley Ccacyahuillca Bejar \\
+		Estudiante & Efrain Vitorino Marin \\
+		Codigo & 160337 \\
+		Curso & Laboratorio Computacion Grafica 1 \\
+		Repositorio & \href{https://github.com/lovito99/Practica-3-Grafica}{github.com/lovito99/Practica-3-Grafica} \\
+		Fecha & 27 de abril de 2026 \\
+	\end{tabular}
+
+	\vfill
+\end{titlepage}
+
+\clearpage
+\pagenumbering{arabic}
 
 \section{Objetivo}
 
-Implementar en C++ con OpenGL moderno los algoritmos de trazado de lineas y de circunferencias indicados en la guia, y utilizarlos para:
+Implementar en C++ con OpenGL moderno los algoritmos de rasterizacion de lineas y circunferencias indicados en la practica, y utilizarlos para construir una figura compuesta y una escena con cinco circunferencias aleatorias marcando sus puntos de interseccion.
+
+Los objetivos especificos desarrollados en el repositorio fueron los siguientes:
 
 \begin{enumerate}
-	\item Dibujar una figura compuesta a partir de lineas y circunferencias.
-	\item Dibujar cinco circunferencias con centros y radios aleatorios y marcar sus intersecciones.
+	\item Implementar un algoritmo incremental para el trazado de lineas.
+	\item Implementar los algoritmos de circunferencia por simetria de dos, cuatro y ocho vias.
+	\item Implementar el algoritmo de circunferencia por punto medio.
+	\item Componer una escena bidimensional usando las primitivas rasterizadas.
+	\item Generar cinco circunferencias con parametros aleatorios y resaltar sus intersecciones.
 \end{enumerate}
+
+\section{Descripcion general}
+
+La aplicacion presenta dos escenas interactivas. La primera dibuja una figura compuesta mediante lineas y circunferencias rasterizadas. La segunda genera cinco circunferencias con parametros aleatorios y marca sus puntos de interseccion. Ambas escenas se renderizan como colecciones de puntos coloreados en una ventana OpenGL.
 
 \section{Algoritmos implementados}
 
-En el proyecto se implementaron los siguientes algoritmos:
+\subsection{Algoritmo de lineas}
+
+Se implemento el algoritmo de Bresenham para lineas. Este metodo permite rasterizar segmentos utilizando operaciones enteras, por lo que resulta adecuado para construir la estructura base de la figura compuesta, como el contorno del automovil, las ventanas, el suelo, los rayos del sol y las marcas de interseccion.
+
+\subsection{Algoritmos de circunferencia}
+
+Se implementaron los siguientes algoritmos de circunferencia:
 
 \begin{itemize}
-	\item Bresenham para lineas.
-	\item Circunferencia por simetria de dos vias.
-	\item Circunferencia por simetria de cuatro vias.
-	\item Circunferencia por simetria de ocho vias.
-	\item Circunferencia por punto medio.
+	\item Simetria de dos vias.
+	\item Simetria de cuatro vias.
+	\item Simetria de ocho vias.
+	\item Punto medio.
 \end{itemize}
 
-\section{Estructura del proyecto}
+Cada algoritmo fue conservado como una funcion independiente para facilitar su comparacion y reutilizacion. En la escena principal se emplean varios de ellos sobre distintos elementos decorativos y estructurales. En la escena aleatoria se asignan de manera alternada a las cinco circunferencias para comprobar que todas las implementaciones produzcan trazos correctos.
+
+\section{Parametros clave y logica del codigo}
+
+Los parametros principales observables en el codigo son los siguientes:
+
+\begin{itemize}
+	\item Tamano de ventana: 960 por 720 pixeles.
+	\item Proyeccion ortografica en coordenadas de pantalla para facilitar el trazado 2D.
+	\item Rango de centros aleatorios en la escena 2: eje X entre 220 y 740, eje Y entre 200 y 520.
+	\item Rango de radios aleatorios: entre 70 y 130.
+	\item Tamano del punto dibujado en el shader: 4 pixeles.
+\end{itemize}
+
+La logica central del programa puede resumirse de esta manera:
+
+\begin{enumerate}
+	\item Se inicializa GLFW para la ventana, GLEW para las funciones OpenGL y una proyeccion ortografica para dibujar en 2D.
+	\item Los algoritmos de lineas y circunferencias generan vertices en memoria mediante la funcion de agregado de puntos.
+	\item La escena 1 construye una figura fija combinando rectas y circunferencias.
+	\item La escena 2 genera cinco circunferencias aleatorias, alterna los algoritmos de circunferencia y calcula sus intersecciones con geometria analitica.
+	\item Los vertices se envian a GPU mediante un VBO y se renderizan con color por vertice.
+\end{enumerate}
+
+\section{Codigo clave de la tarea}
+
+Una parte esencial del trabajo consiste en almacenar cada punto generado por los algoritmos dentro de una estructura de vertice con posicion y color. Esto permite reutilizar la misma ruta de render para lineas, circunferencias e intersecciones.
+
+\noindent\textbf{Fuente:} \texttt{primitivas.h} y \texttt{primitivas.cpp}
+
+\begin{lstlisting}[language=C++]
+struct Vertice {
+	float x;
+	float y;
+	float r;
+	float g;
+	float b;
+};
+
+void agregarPunto(BufferVertices& vertices, int x, int y, Color color) {
+	vertices.push_back({
+		static_cast<float>(x),
+		static_cast<float>(y),
+		color.r, color.g, color.b
+	});
+}
+\end{lstlisting}
+
+Para el trazado de circunferencias, uno de los bloques clave es la implementacion por simetria de dos vias, que calcula la coordenada Y a partir de la ecuacion del circulo y dibuja los puntos superior e inferior para cada valor de X.
+
+\noindent\textbf{Fuente:} \texttt{primitivas.cpp}
+
+\begin{lstlisting}[language=C++]
+void circuloDosVias(BufferVertices& vertices, int x0, int y0, int radio, Color color) {
+	agregarPunto(vertices, x0 + radio, y0, color);
+	agregarPunto(vertices, x0 - radio, y0, color);
+
+	for (int x = -radio + 1; x <= radio - 1; ++x) {
+		const int y = redondeoRaiz(radio, x);
+		agregarPunto(vertices, x0 + x, y0 + y, color);
+		agregarPunto(vertices, x0 + x, y0 - y, color);
+	}
+}
+\end{lstlisting}
+
+En el caso de las lineas, el algoritmo de Bresenham avanza en la grilla mediante un termino de error y agrega cada punto de manera incremental.
+
+\noindent\textbf{Fuente:} \texttt{primitivas.cpp}
+
+\begin{lstlisting}[language=C++]
+void lineaBresenham(BufferVertices& vertices, int x0, int y0, int x1, int y1, Color color) {
+	int xActual = x0;
+	int yActual = y0;
+	const int deltaX = std::abs(x1 - x0);
+	const int deltaY = std::abs(y1 - y0);
+	int error = deltaX - deltaY;
+
+	while (true) {
+		agregarPunto(vertices, xActual, yActual, color);
+		if (xActual == x1 && yActual == y1) {
+			break;
+		}
+		const int dobleError = error * 2;
+		if (dobleError > -deltaY) {
+			error -= deltaY;
+			xActual += (x0 < x1) ? 1 : -1;
+		}
+		if (dobleError < deltaX) {
+			error += deltaX;
+			yActual += (y0 < y1) ? 1 : -1;
+		}
+	}
+}
+\end{lstlisting}
+
+Para completar lo solicitado por la practica, tambien se incluyeron las otras tres variantes de circunferencia. La version de cuatro vias aprovecha la simetria respecto a ambos ejes:
+
+\noindent\textbf{Fuente:} \texttt{primitivas.cpp}
+
+\begin{lstlisting}[language=C++]
+void circuloCuatroVias(BufferVertices& vertices, int x0, int y0, int radio, Color color) {
+	agregarPunto(vertices, x0, y0 + radio, color);
+	agregarPunto(vertices, x0, y0 - radio, color);
+	agregarPunto(vertices, x0 + radio, y0, color);
+	agregarPunto(vertices, x0 - radio, y0, color);
+
+	for (int x = 1; x <= radio - 1; ++x) {
+		const int y = redondeoRaiz(radio, x);
+		agregarPunto(vertices, x0 + x, y0 + y, color);
+		agregarPunto(vertices, x0 + x, y0 - y, color);
+		agregarPunto(vertices, x0 - x, y0 + y, color);
+		agregarPunto(vertices, x0 - x, y0 - y, color);
+	}
+}
+\end{lstlisting}
+
+La version de ocho vias extiende la simetria para dibujar los ocho puntos equivalentes del mismo octante:
+
+\noindent\textbf{Fuente:} \texttt{primitivas.cpp}
+
+\begin{lstlisting}[language=C++]
+void circuloOchoVias(BufferVertices& vertices, int x0, int y0, int radio, Color color) {
+	agregarPunto(vertices, x0, y0 + radio, color);
+	agregarPunto(vertices, x0, y0 - radio, color);
+	agregarPunto(vertices, x0 + radio, y0, color);
+	agregarPunto(vertices, x0 - radio, y0, color);
+
+	int x = 1;
+	int y = redondeoRaiz(radio, x);
+
+	while (x < y) {
+		agregarPunto(vertices, x0 + x, y0 + y, color);
+		agregarPunto(vertices, x0 + x, y0 - y, color);
+		agregarPunto(vertices, x0 - x, y0 + y, color);
+		agregarPunto(vertices, x0 - x, y0 - y, color);
+		agregarPunto(vertices, x0 + y, y0 + x, color);
+		agregarPunto(vertices, x0 + y, y0 - x, color);
+		agregarPunto(vertices, x0 - y, y0 + x, color);
+		agregarPunto(vertices, x0 - y, y0 - x, color);
+
+		++x;
+		y = redondeoRaiz(radio, x);
+	}
+}
+\end{lstlisting}
+
+El algoritmo de punto medio utiliza una variable de decision incremental para evitar recalcular la ecuacion del circulo en cada iteracion:
+
+\noindent\textbf{Fuente:} \texttt{primitivas.cpp}
+
+\begin{lstlisting}[language=C++]
+void circuloPuntoMedio(BufferVertices& vertices, int x0, int y0, int radio, Color color) {
+	double hm = 1.25 - static_cast<double>(radio);
+	int x = 0;
+	int y = -radio;
+
+	agregarPunto(vertices, x0, y0 + radio, color);
+	agregarPunto(vertices, x0, y0 - radio, color);
+	agregarPunto(vertices, x0 + radio, y0, color);
+	agregarPunto(vertices, x0 - radio, y0, color);
+
+	while (x < -(y + 1)) {
+		if (hm < 0.0) {
+			hm += (2.0 * static_cast<double>(x)) + 3.0;
+		} else {
+			hm += (2.0 * static_cast<double>(x)) + (2.0 * static_cast<double>(y)) + 5.0;
+			++y;
+		}
+		++x;
+		dibujarOchoPuntos(vertices, x0, y0, x, y, color);
+	}
+}
+\end{lstlisting}
+
+La segunda parte de la tarea pide cinco circunferencias aleatorias y sus intersecciones. Para ello se calculan geometricamente los puntos de corte entre pares de circunferencias:
+
+\noindent\textbf{Fuente:} \texttt{primitivas.cpp}
+
+\begin{lstlisting}[language=C++]
+std::vector<PuntoReal> calcularIntersecciones(const Circulo& primero, const Circulo& segundo) {
+	const double dx = static_cast<double>(segundo.centroX - primero.centroX);
+	const double dy = static_cast<double>(segundo.centroY - primero.centroY);
+	const double distancia = std::hypot(dx, dy);
+
+	if (distancia > static_cast<double>(primero.radio + segundo.radio)) {
+		return {};
+	}
+
+	const double radioA = static_cast<double>(primero.radio);
+	const double radioB = static_cast<double>(segundo.radio);
+	const double a = ((radioA * radioA) - (radioB * radioB) + (distancia * distancia)) / (2.0 * distancia);
+	const double h = std::sqrt(std::max(0.0, (radioA * radioA) - (a * a)));
+
+	const double baseX = static_cast<double>(primero.centroX) + (a * dx / distancia);
+	const double baseY = static_cast<double>(primero.centroY) + (a * dy / distancia);
+
+	return {{
+		static_cast<float>(baseX - dy * h / distancia),
+		static_cast<float>(baseY + dx * h / distancia)
+	}};
+}
+\end{lstlisting}
+
+La escena aleatoria se arma alternando los algoritmos de circunferencia y dibujando un marcador sobre cada interseccion encontrada:
+
+\noindent\textbf{Fuente:} \texttt{escenas.cpp}
+
+\begin{lstlisting}[language=C++]
+BufferVertices crearEscenaIntersecciones() {
+	BufferVertices vertices;
+	const std::vector<Circulo> circulos = generarCirculos(semilla);
+	const std::array<AlgoritmoCirculo, 4> algoritmos = {
+		circuloDosVias,
+		circuloCuatroVias,
+		circuloOchoVias,
+		circuloPuntoMedio
+	};
+
+	for (std::size_t indice = 0; indice < circulos.size(); ++indice) {
+		algoritmo(vertices, circulo.centroX, circulo.centroY, circulo.radio, circulo.color);
+	}
+
+	for (std::size_t i = 0; i < circulos.size(); ++i) {
+		for (std::size_t j = i + 1; j < circulos.size(); ++j) {
+			const auto puntos = calcularIntersecciones(circulos[i], circulos[j]);
+			for (const PuntoReal& punto : puntos) {
+				dibujarMarcador(vertices, static_cast<int>(std::lround(punto[0])),
+								static_cast<int>(std::lround(punto[1])), colorRojo);
+			}
+		}
+	}
+	return vertices;
+}
+\end{lstlisting}
+
+\section{Flujo de vertices de CPU a GPU}
+
+El recorrido de los vertices desde CPU hasta GPU en la aplicacion sigue una secuencia clara:
+
+\begin{enumerate}
+	\item En CPU, los algoritmos generan puntos y los almacenan en un contenedor de tipo \texttt{std::vector<Vertice>}.
+	\item Cada \texttt{Vertice} contiene posicion 2D y color RGB.
+	\item Cuando una escena esta lista, sus vertices se copian al buffer de OpenGL mediante \texttt{glBufferData}.
+	\item El VAO define como interpretar esos datos: la posicion entra por \texttt{location = 0} y el color por \texttt{location = 1}.
+	\item El vertex shader transforma la posicion con la matriz de proyeccion y reenvia el color al fragment shader.
+	\item Finalmente, OpenGL rasteriza los puntos con \texttt{glDrawArrays(GL\_POINTS, ...)}.
+\end{enumerate}
+
+El envio del arreglo de vertices desde CPU a GPU se realiza en el siguiente bloque:
+
+\noindent\textbf{Fuente:} \texttt{main.cpp}
+
+\begin{lstlisting}[language=C++]
+void cargarEscena(GLuint vbo, const BufferVertices& vertices) {
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(
+		GL_ARRAY_BUFFER,
+		static_cast<GLsizeiptr>(vertices.size() * sizeof(Vertice)),
+		vertices.data(),
+		GL_STATIC_DRAW);
+}
+\end{lstlisting}
+
+La configuracion de atributos del vertice se hace en \texttt{main.cpp} mediante el VAO y el VBO:
+
+\noindent\textbf{Fuente:} \texttt{main.cpp}
+
+\begin{lstlisting}[language=C++]
+glBindVertexArray(vao);
+glBindBuffer(GL_ARRAY_BUFFER, vbo);
+glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertice), reinterpret_cast<void*>(0));
+glEnableVertexAttribArray(0);
+glVertexAttribPointer(
+	1, 3, GL_FLOAT, GL_FALSE,
+	sizeof(Vertice), reinterpret_cast<void*>(2 * sizeof(float)));
+glEnableVertexAttribArray(1);
+\end{lstlisting}
+
+En GPU, el shader de vertices recibe posicion y color y prepara la salida para rasterizacion:
+
+\noindent\textbf{Fuente:} \texttt{shader.vert}
+
+\begin{lstlisting}[language=C++]
+layout (location = 0) in vec2 aPos;
+layout (location = 1) in vec3 aColor;
+uniform mat4 projection;
+
+out vec3 vertexColor;
+
+void main() {
+	gl_Position = projection * vec4(aPos, 0.0, 1.0);
+	gl_PointSize = 4.0;
+	vertexColor = aColor;
+}
+\end{lstlisting}
+
+\section{Estructura del repositorio}
 
 \begin{center}
-\begin{tabular}{ll}
+\begin{tabular}{p{4.2cm}p{9.2cm}}
 \toprule
-Archivo & Descripcion \\
+Archivo & Funcion dentro del proyecto \\
 \midrule
-main.cpp & Inicializacion de OpenGL y control de escenas \\
-primitivas.cpp & Algoritmos de lineas, circunferencias e intersecciones \\
-escenas.cpp & Construccion de la figura y de la escena aleatoria \\
-shader.vert / shader.frag & Shaders para dibujar puntos con color \\
+main.cpp & Inicializacion de GLFW, GLEW y OpenGL, configuracion de buffers y cambio entre escenas \\
+primitivas.h / primitivas.cpp & Definicion de estructuras y algoritmos de lineas, circunferencias e intersecciones \\
+escenas.h / escenas.cpp & Construccion de la escena compuesta y de la escena aleatoria \\
+Shaders .vert y .frag & Shaders para dibujar puntos con color por vertice \\
+README.md & Instrucciones generales de compilacion y uso \\
+informe/informe.tex & Documento tecnico de la practica \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-\section{Descripcion de la solucion}
+\section{Desarrollo de la solucion}
 
-La aplicacion genera dos escenas. La primera escena dibuja una figura compuesta mediante segmentos de recta y circunferencias construidas con distintos algoritmos. La segunda escena genera cinco circunferencias con una semilla aleatoria distinta en cada ejecucion y marca los puntos de interseccion usando cruces dibujadas con el algoritmo de lineas.
+La figura compuesta utiliza lineas para carretera, carroceria, puertas, ventanas, rayos y detalles, mientras que las circunferencias se usan para ruedas, sol, arbol y elementos auxiliares. La escena de intersecciones genera automaticamente cinco circunferencias con una semilla distinta en cada ejecucion y comprueba que existan cruces visibles antes de aceptar el conjunto.
 
-Para detectar intersecciones entre dos circunferencias se empleo la formulacion geometrica clasica a partir de la distancia entre centros. Si la distancia es compatible con una interseccion real, se calculan uno o dos puntos y despues se rasterizan marcadores sobre esos puntos.
+Las intersecciones entre dos circunferencias se obtienen a partir de la distancia entre centros y de la solucion geometrica del sistema. Cuando existe uno o dos puntos de corte, estos se remarcan con cruces dibujadas por el algoritmo de Bresenham.
+
+En la escena aleatoria, cada circunferencia se dibuja usando uno de los algoritmos disponibles de forma alternada. Asi, durante una sola ejecucion se visualiza el resultado conjunto de:
+
+\begin{itemize}
+	\item Simetria de dos vias.
+	\item Simetria de cuatro vias.
+	\item Simetria de ocho vias.
+	\item Punto medio.
+\end{itemize}
+
+\section{Imagen generada}
+
+La Figura~\ref{fig:salida} muestra la salida obtenida para la escena principal del programa.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.95\textwidth]{image.png}
+	\caption{Escena compuesta generada por la aplicacion OpenGL.}
+	\label{fig:salida}
+\end{figure}
 
 \section{Compilacion y ejecucion}
 
-Desde la raiz del proyecto:
+Desde la raiz del proyecto se utilizan los siguientes comandos:
 
 \begin{verbatim}
 cmake -S . -B build
@@ -70,16 +451,35 @@ cmake --build build
 ./build/circunferencias
 \end{verbatim}
 
-Controles del programa:
+Durante la ejecucion del programa se dispone de los siguientes controles:
 
 \begin{itemize}
 	\item Tecla 1: muestra la figura compuesta.
 	\item Tecla 2: muestra cinco circunferencias aleatorias con intersecciones.
-	\item Tecla R: regenera la escena aleatoria.
+	\item Tecla R: regenera la escena aleatoria para obtener una nueva configuracion.
 \end{itemize}
+
+\section{Resultados obtenidos}
+
+Los resultados obtenidos fueron los siguientes:
+
+\begin{itemize}
+	\item La aplicacion compilo correctamente en Linux usando CMake.
+	\item La escena compuesta mostro una imagen consistente formada por lineas y circunferencias rasterizadas.
+	\item La escena aleatoria confirmo el funcionamiento del calculo de intersecciones entre circunferencias.
+	\item Los cuatro algoritmos de circunferencia produjeron trazos validos dentro de la misma aplicacion.
+\end{itemize}
+
+El repositorio de trabajo utilizado para el desarrollo y seguimiento del proyecto es el siguiente:
+
+\begin{center}
+	\url{https://github.com/lovito99/Practica-3-Grafica}
+\end{center}
 
 \section{Conclusiones}
 
-La practica permite comparar varios algoritmos de trazado de circunferencias basados en simetria y en decision incremental. Ademas, muestra como combinar primitivas rasterizadas para construir escenas mas complejas y como identificar geometricamente intersecciones entre circunferencias.
+La practica permitio implementar y comparar algoritmos clasicos de graficacion por computadora en un entorno OpenGL moderno. Se verifico que los enfoques basados en simetria y el algoritmo de punto medio permiten generar circunferencias correctas, mientras que Bresenham proporciona una base eficiente para el trazado de lineas.
+
+Ademas, el trabajo mostro que estas primitivas pueden reutilizarse para construir escenas completas y para resolver tareas geometricas adicionales, como la deteccion y visualizacion de intersecciones entre circunferencias. El resultado final integra implementacion, visualizacion interactiva y documentacion tecnica dentro del mismo repositorio.
 
 \end{document}
