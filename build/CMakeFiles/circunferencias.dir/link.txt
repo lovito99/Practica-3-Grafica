@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/circunferencias.dir/main.cpp.o CMakeFiles/circunferencias.dir/primitivas.cpp.o CMakeFiles/circunferencias.dir/escenas.cpp.o -o circunferencias  /usr/lib/x86_64-linux-gnu/libGL.so /usr/lib/x86_64-linux-gnu/libGLEW.so /usr/lib/x86_64-linux-gnu/libglfw.so.3.3 

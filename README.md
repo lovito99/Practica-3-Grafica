@@ -1,40 +1,38 @@
-# Práctica 03: Algoritmos de Generación de Circunferencias
+# Practica 3: Lineas, Circunferencias e Intersecciones
 
-Este proyecto implementa los algoritmos fundamentales para la generación de circunferencias en **C++** utilizando **OpenGL moderno (3.3+)**. [cite_start]El objetivo es visualizar y comparar la eficiencia de diferentes métodos de rasterización de curvas[cite: 5, 8].
+El proyecto ahora contiene una aplicacion OpenGL en C++17 con dos escenas:
 
-## Requisitos del Sistema
+1. Una figura compuesta usando un algoritmo de lineas y los cuatro algoritmos de circunferencia solicitados.
+2. Una escena con 5 circulos aleatorios y el marcado de sus intersecciones.
 
-Para compilar y ejecutar este proyecto, necesitas tener instalados:
+## Algoritmos implementados
 
-* **Compilador C++**: Soporte para C++17 (GCC, Clang o MSVC).
-* **CMake**: Versión 3.10 o superior.
-* **Librerías de Desarrollo**:
-    * **GLEW**: Extensiones de OpenGL.
-    * **GLFW**: Gestión de ventanas y eventos.
-    * **GLM**: Librería matemática para gráficos (matrices de proyección).
+- Simetria de dos vias
+- Simetria de cuatro vias
+- Simetria de ocho vias
+- Punto medio
+- Bresenham para lineas
 
-## Estructura de Archivos
+## Archivos principales
 
-* [cite_start]`main.cpp`: Contiene las implementaciones de los algoritmos (2-vías, 4-vías, 8-vías y Punto Medio)[cite: 10, 55, 74, 102].
-* `CMakeLists.txt`: Archivo de configuración para la generación del proyecto.
-* `shader.vert` / `shader.frag`: Código de los Shaders para procesamiento en GPU.
+- main.cpp: inicializacion de OpenGL, carga de shaders y cambio de escena.
+- primitivas.h / primitivas.cpp: algoritmos de lineas, circunferencias e interseccion entre circulos.
+- escenas.h / escenas.cpp: construccion de la figura compuesta y de la escena aleatoria.
+- shader.vert / shader.frag: shaders con color por vertice.
 
-## Instrucciones de Compilación
+## Controles
 
-Sigue estos pasos desde una terminal en la carpeta raíz del proyecto:
+- Tecla 1: figura compuesta.
+- Tecla 2: 5 circulos aleatorios con intersecciones.
+- Tecla R: regenera la escena de circulos aleatorios.
 
-1. **Crear el directorio de construcción**:
-   ```bash
-   mkdir build
-   cd build
+## Compilacion
 
-2. **Configurar el proyecto con CMake:
-Esto preparará los archivos necesarios para tu compilador específico.
-   ```bash
-   cmake ..
-
-3. Compilar el ejecutable:
-   ```bash
-   cmake --build .
+```bash
+mkdir build
+cd build
+cmake ..
+cmake --build .
+```
 
 

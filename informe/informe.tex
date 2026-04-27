@@ -1,0 +1,85 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+\geometry{margin=2.5cm}
+
+\title{Practica 3\\Algoritmos de lineas, circunferencias e intersecciones}
+\author{Lovito99}
+\date{27 de abril de 2026}
+
+\begin{document}
+
+\maketitle
+
+\section{Objetivo}
+
+Implementar en C++ con OpenGL moderno los algoritmos de trazado de lineas y de circunferencias indicados en la guia, y utilizarlos para:
+
+\begin{enumerate}
+	\item Dibujar una figura compuesta a partir de lineas y circunferencias.
+	\item Dibujar cinco circunferencias con centros y radios aleatorios y marcar sus intersecciones.
+\end{enumerate}
+
+\section{Algoritmos implementados}
+
+En el proyecto se implementaron los siguientes algoritmos:
+
+\begin{itemize}
+	\item Bresenham para lineas.
+	\item Circunferencia por simetria de dos vias.
+	\item Circunferencia por simetria de cuatro vias.
+	\item Circunferencia por simetria de ocho vias.
+	\item Circunferencia por punto medio.
+\end{itemize}
+
+\section{Estructura del proyecto}
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Archivo & Descripcion \\
+\midrule
+main.cpp & Inicializacion de OpenGL y control de escenas \\
+primitivas.cpp & Algoritmos de lineas, circunferencias e intersecciones \\
+escenas.cpp & Construccion de la figura y de la escena aleatoria \\
+shader.vert / shader.frag & Shaders para dibujar puntos con color \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Descripcion de la solucion}
+
+La aplicacion genera dos escenas. La primera escena dibuja una figura compuesta mediante segmentos de recta y circunferencias construidas con distintos algoritmos. La segunda escena genera cinco circunferencias con una semilla aleatoria distinta en cada ejecucion y marca los puntos de interseccion usando cruces dibujadas con el algoritmo de lineas.
+
+Para detectar intersecciones entre dos circunferencias se empleo la formulacion geometrica clasica a partir de la distancia entre centros. Si la distancia es compatible con una interseccion real, se calculan uno o dos puntos y despues se rasterizan marcadores sobre esos puntos.
+
+\section{Compilacion y ejecucion}
+
+Desde la raiz del proyecto:
+
+\begin{verbatim}
+cmake -S . -B build
+cmake --build build
+./build/circunferencias
+\end{verbatim}
+
+Controles del programa:
+
+\begin{itemize}
+	\item Tecla 1: muestra la figura compuesta.
+	\item Tecla 2: muestra cinco circunferencias aleatorias con intersecciones.
+	\item Tecla R: regenera la escena aleatoria.
+\end{itemize}
+
+\section{Conclusiones}
+
+La practica permite comparar varios algoritmos de trazado de circunferencias basados en simetria y en decision incremental. Ademas, muestra como combinar primitivas rasterizadas para construir escenas mas complejas y como identificar geometricamente intersecciones entre circunferencias.
+
+\end{document}
